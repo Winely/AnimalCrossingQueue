@@ -1,5 +1,6 @@
 import os
-from flask import Flask
+import hashlib
+from flask import Flask, request
 from datetime import datetime
 import re
 
@@ -22,10 +23,19 @@ def hello_there(name):
     content = "Hello there, " + clean_name + "! It's " + formatted_now
     return content
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def hello_world():
-    target = os.environ.get('TARGET', 'World')
-    return 'Hello {}!\n'.format(target)
+    args = request.args
+    signature = args.get('signature')
+    timestamp = args.get('timestamp')
+    nonce = args.get('nonce')
+    echostr = args.get('echostr')
+
+    token = 'testToken'
+    tmpstr = ''.join(sorted([token, timestamp, nonce])).encode('utf-8')
+    hashcode = hashlib.sha1(tmpstr).hexdigest()
+    if signature == hashcode:
+        return echostr
 
 
 if __name__ == "__main__":
