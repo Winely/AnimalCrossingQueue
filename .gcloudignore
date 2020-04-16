@@ -1,5 +1,5 @@
+README.md
 __pycache__
-.idea
 .vscode
+.git
 venv
-env
