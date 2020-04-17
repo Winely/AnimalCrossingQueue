@@ -2,13 +2,17 @@
 import os
 import hashlib
 from flask import Flask, request
-from db import db
-from models.user import User
+from .db import db
+from .models.user import User
 from datetime import datetime
 import re
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://"
+with open('postgresql.conf') as f:
+    app.config['SQLALCHEMY_DATABASE_URI'] = f.read()
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(app)
+
 
 @app.route("/hello/<name>")
 def hello_there(name):
@@ -50,6 +54,13 @@ def create_user():
     db.session.commit()
     return nickname
 
+@app.route('/api/users', methods=['GET'])
+def list_user():
+    query = db.session.query(User)
+    cnt = query.count()
+    users = query.all()
+    return "\n".join([user.__repr__() for user in users]+["total users: {}".format(cnt)])
+
+
 if __name__ == "__main__":
-    db.init_app(app)
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))

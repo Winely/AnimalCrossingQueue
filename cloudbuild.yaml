@@ -1,4 +1,7 @@
 steps:
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: 'bash'
+    args: [ '-c', 'gcloud secrets versions access latest --secret=postgresql > postgresql.conf' ]
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/wechat:$COMMIT_SHA', '.']
   - name: 'gcr.io/cloud-builders/docker'
