@@ -1,10 +1,18 @@
+# -*- coding: utf-8 -*-
 import os
 import hashlib
 from flask import Flask, request
+from .db import db
+from .models.user import User
 from datetime import datetime
 import re
 
 app = Flask(__name__)
+with open('postgresql.conf') as f:
+    app.config['SQLALCHEMY_DATABASE_URI'] = f.read()
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(app)
+
 
 @app.route("/hello/<name>")
 def hello_there(name):
@@ -36,6 +44,22 @@ def hello_world():
     hashcode = hashlib.sha1(tmpstr).hexdigest()
     if signature == hashcode:
         return echostr
+
+@app.route('/api/users/create', methods=['GET'])
+def create_user():
+    args = request.args
+    nickname = args.get('nickname')
+    user = User(nickname=nickname, tag="123")
+    db.session.add(user)
+    db.session.commit()
+    return nickname
+
+@app.route('/api/users', methods=['GET'])
+def list_user():
+    query = db.session.query(User)
+    cnt = query.count()
+    users = query.all()
+    return "\n".join([user.__repr__() for user in users]+["total users: {}".format(cnt)])
 
 
 if __name__ == "__main__":
