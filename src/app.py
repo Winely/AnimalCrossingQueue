@@ -3,7 +3,6 @@ import os
 import hashlib
 from flask import Flask, request
 from .db import db
-from .models.user import User
 from datetime import datetime
 import re
 from .routes import users_api
