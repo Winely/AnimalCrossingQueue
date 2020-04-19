@@ -5,3 +5,4 @@ venv
 env
 postgresql.conf
 init
+config.ini

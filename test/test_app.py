@@ -1,13 +1,16 @@
 import unittest
 import os
+import configparser
 from datetime import datetime
 
 from src import app
 from src.models.queue import Queue
 from src.utils import RotateMode
 
-TEST_DB_URI = "test.db"
-
+# load configuration
+app_config = configparser.ConfigParser()
+app_config.read('config.ini')
+TEST_DB_URI = app_config['postgresql']['test']
 
 class AppTestCase(unittest.TestCase):
     def setUp(self):
