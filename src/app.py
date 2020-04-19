@@ -7,6 +7,7 @@ from datetime import datetime
 import re
 from .routes import users_api
 
+
 app = Flask(__name__)
 with open('postgresql.conf') as f:
     app.config['SQLALCHEMY_DATABASE_URI'] = f.read()
@@ -17,8 +18,6 @@ with open('postgresql.conf') as f:
 
 @app.route("/hello/<name>")
 def hello_there(name):
-    now = datetime.now()
-    formatted_now = now.strftime("%A, %d %B, %Y at %X")
 
     # Filter the name argument to letters only using regular expressions. URL arguments
     # can contain arbitrary text, so we restrict to safe characters only.
@@ -29,8 +28,9 @@ def hello_there(name):
     else:
         clean_name = "Friend"
 
-    content = "Hello there, " + clean_name + "! It's " + formatted_now
+    content = "Hello there, " + clean_name
     return content
+
 
 @app.route('/', methods=['GET'])
 def hello_world():

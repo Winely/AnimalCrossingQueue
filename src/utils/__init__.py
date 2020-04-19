@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import random, string, json
+from enum import Enum
 
 def response_json(data={}, msg='ok', code=0):
     return {
@@ -20,11 +21,7 @@ def generate_random_str(length):
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
 # 轮换模式
-def get_rotate_mode_value(mode):
-    if mode == 'timing':
-        return 1
-    elif mode == 'flex':
-        return 2
-    elif mode == 'appoint':
-        return 3
-    return 0
+class RotateMode(Enum):
+    HARD = 0,
+    SOFT = 1,
+    MANNUAL = 2
