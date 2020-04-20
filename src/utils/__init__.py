@@ -25,3 +25,13 @@ class RotateMode(Enum):
     HARD = 0,
     SOFT = 1,
     MANNUAL = 2
+
+# 驼峰转下滑线
+def camel_to_snake_case(text):
+    characters = []
+    for index, char in enumerate(text):
+        if char.isupper() and index != 0:
+            characters.append('_')
+        characters.append(char)
+
+    return ''.join(characters).lower()
