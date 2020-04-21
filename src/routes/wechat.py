@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import hashlib
-from datetime import datetime
+import time
 from flask import Blueprint, request, Response
 from src.db import db
 from src.services.wechat import parse_message_body
@@ -29,11 +29,11 @@ def wechat_message():
     message = parse_message_body(body)
     return Response(
         response_xml({
-            'ToUserName': message.to_user_name,
-            'FromUserName': message.from_user_name,
-            'CreateTime': int(datetime.now().timestamp())
+            'ToUserName': message.from_user_name,
+            'FromUserName': message.to_user_name,
+            'CreateTime': int(time.time()),
             'MsgType': 'text',
-            'Content': "hello, world",
+            'Content': '伞盖暂时无法回应......',
         }),
         mimetype='text/xml'
     )

@@ -6,7 +6,7 @@ def build_xml_tag(root, data={}):
         if isinstance(tag_value, dict):
             build_xml_tag(tag, tag_value)
         else:
-            ET.SubElement(tag, tag_value)
+            tag.text = str(tag_value)
 
 def response_xml(data={}):
     root = ET.Element('xml')
