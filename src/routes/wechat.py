@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import hashlib
-from flask import Blueprint, request
+from datetime import datetime
+from flask import Blueprint, request, Response
 from src.db import db
+from src.services.wechat import parse_message_body
+from src.utils import response_xml
 
 wechat_api = Blueprint('wechat', __name__)
 
@@ -23,5 +26,14 @@ def wechat_validation():
 @wechat_api.route('/', methods=['POST'])
 def wechat_message():
     body = request.get_data()
-    print(body)
-    return {}
+    message = parse_message_body(body)
+    return Response(
+        response_xml({
+            'ToUserName': message.to_user_name,
+            'FromUserName': message.from_user_name,
+            'CreateTime': int(datetime.now().timestamp())
+            'MsgType': 'text',
+            'Content': "hello, world",
+        }),
+        mimetype='text/xml'
+    )
