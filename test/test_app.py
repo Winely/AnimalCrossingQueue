@@ -21,6 +21,7 @@ class AppTestCase(unittest.TestCase):
         app.config['DEBUG'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = TEST_DB_URI
         with app.app_context():
+            # will take some time to run
             db.drop_all()
             db.create_all()
 
