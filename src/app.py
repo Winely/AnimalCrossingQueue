@@ -6,7 +6,7 @@ from flask import Flask, request
 from .db import db
 from datetime import datetime
 import re
-from .routes import users_api
+from .routes import users_api, wechat_api
 
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialization
 db.init_app(app)
 app.register_blueprint(users_api)
-
+app.register_blueprint(wechat_api)
 
 @app.route("/hello/<name>")
 def hello_there(name):
@@ -39,22 +39,6 @@ def hello_there(name):
 
     content = "Hello there, " + clean_name
     return content
-
-
-@app.route('/', methods=['GET'])
-def hello_world():
-    args = request.args
-    signature = args.get('signature')
-    timestamp = args.get('timestamp')
-    nonce = args.get('nonce')
-    echostr = args.get('echostr')
-
-    token = 'testToken'
-    tmpstr = ''.join(sorted([token, timestamp, nonce])).encode('utf-8')
-    hashcode = hashlib.sha1(tmpstr).hexdigest()
-    if signature == hashcode:
-        return echostr
-
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
