@@ -1,25 +1,33 @@
 import unittest
 import os
+import configparser
 from datetime import datetime
+from flask import stream_with_context
 
-from src import app
+from src import app, db
 from src.models.queue import Queue
 from src.utils import RotateMode
 
-TEST_DB_URI = "test.db"
-
+# load configuration
+app_config = configparser.ConfigParser()
+app_config.read('config.ini')
+TEST_DB_URI = app_config['postgresql']['test']
 
 class AppTestCase(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['DEBUG'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = TEST_DB_URI
-        self.app = app.test_client()
-        # db.drop_all()
-        # db.create_all()
-        self.assertFalse(app.debug)
+        with app.app_context():
+            # will take some time to run
+            db.drop_all()
+            db.create_all()
 
+    def setUp(self):
+        self.app = app.test_client()
+        
     def test_list_user(self):
         pass
 

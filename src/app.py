@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
+import hashlib
+import configparser
 from flask import Flask, request
 from .db import db
 from datetime import datetime
@@ -8,13 +10,20 @@ from .routes import users_api, wechat_api
 
 
 app = Flask(__name__)
-with open('postgresql.conf') as f:
-    app.config['SQLALCHEMY_DATABASE_URI'] = f.read()
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db.init_app(app)
-    app.register_blueprint(wechat_api)
-    app.register_blueprint(users_api)
 
+# `local`, `development`, `test`, `production`
+env = os.environ.get('ENV', 'production')
+
+# Read Configuration
+app_config = configparser.ConfigParser()
+app_config.read('config.ini')
+app.config['SQLALCHEMY_DATABASE_URI'] = app_config['postgresql'][env]
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialization
+db.init_app(app)
+app.register_blueprint(users_api)
+app.register_blueprint(wechat_api)
 
 @app.route("/hello/<name>")
 def hello_there(name):
